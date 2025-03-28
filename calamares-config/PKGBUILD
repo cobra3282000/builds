@@ -1,6 +1,7 @@
 pkgname=calamares-config
 _destname1="/etc"
 _destname2="/usr/local/bin"
+_destname3="/usr/share/backgrounds
 pkgver=3.3.9
 pkgrel=2
 pkgdesc="Calamares Config"
@@ -18,6 +19,7 @@ package() {
 	install -dm755 ${pkgdir}${_destname1}
 	cp -r ${srcdir}/${pkgname}${_destname1}/* ${pkgdir}${_destname1}
         install -dm755 ${pkgdir}${_destname2}
+	cp -r ${srcdir}/${pkgname}${_destname3}/* ${pkgdir}${_destname3}
 #        cp -r ${srcdir}/${pkgname}${_destname2}/* ${pkgdir}${_destname2}
 #        chmod +x ${pkgdir}${_destname2}/*
 }
