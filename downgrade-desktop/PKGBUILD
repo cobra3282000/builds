@@ -1,7 +1,7 @@
 # Maintainer: cobra3282000
 
 pkgname=downgrade-desktop
-pkgver=1.0.0
+pkgver=1.0.1
 pkgrel=1
 pkgdesc="A graphical desktop application for downgrade, providing an intuitive interface for downgrading Arch Linux packages"
 arch=('x86_64')
