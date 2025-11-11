@@ -2,11 +2,11 @@ pkgname=calamares-config-net
 _destname1="/etc"
 _destname2="/usr/local/bin"
 # _destname3="/usr/share/backgrounds"
-pkgver=3.3.9
-pkgrel=2
+pkgver=1.0.0
+pkgrel=1
 pkgdesc="Calamares Config net"
 arch=('any')
-url="ssh://git@darrengames.ddns.net:2402/cobra3282000"
+url="git@github.com:cobra3282000/calamares-config-netinstall.git"
 license=('GPL3')
 makedepends=('git')
 depends=()
@@ -14,7 +14,7 @@ depends=()
 provides=("${pkgname}")
 
 options=(!strip !emptydirs)
-source=(${pkgname}::"git+${url}/${pkgname}")
+source=(${pkgname}::"git+ssh://git@github.com/cobra3282000/calamares-config-netinstall.git")
 sha256sums=('SKIP')
 package() {
 	install -dm755 ${pkgdir}${_destname1}

@@ -3,17 +3,17 @@ _destname1="/etc"
 _destname2="/usr/local/bin"
 # _destname3="/usr/share/backgrounds"
 pkgver=10.0.1
-pkgrel=1
+pkgrel=2
 pkgdesc="Calamares Config"
 arch=('any')
-url="https://github.com/AcreetionOS-Linux/calamares-config"
+url="git@github.com:cobra3282000/calamares-config.git"
 license=('GPL3')
 makedepends=('git')
 depends=()
 # conflicts=('calamares-net-config')
 provides=("${pkgname}")
 options=(!strip !emptydirs)
-source=("${pkgname}::git+ssh://git@github.com/AcreetionOS-Linux/calamares-config.git")
+source=("${pkgname}::git+ssh://git@github.com/cobra3282000/calamares-config.git")
 sha256sums=('SKIP')
 
 package() {

@@ -1,0 +1,45 @@
+# Maintainer: Darren <your-email@example.com>
+pkgname=system-drivers
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="A lightweight desktop GUI driver management application for Arch Linux"
+arch=('x86_64' 'i686')
+url="https://github.com/cobra3282000/system-drivers"
+license=('GPL3')
+depends=('gtk3' 'pciutils' 'polkit' 'systemd')
+makedepends=('git' 'gcc' 'make' 'pkg-config')
+source=("git+https://github.com/cobra3282000/system-drivers.git"
+        "system-drivers.desktop"
+        "org.systemdrivers.policy"
+        "system-drivers.png")
+md5sums=('SKIP'
+         'SKIP'
+         'SKIP'
+         'SKIP')
+
+build() {
+  cd "$srcdir/$pkgname"
+  make
+}
+
+package() {
+  cd "$srcdir/$pkgname"
+
+  # Install the binary
+  install -Dm755 "bin/system-drivers" "$pkgdir/usr/bin/system-drivers"
+
+  # Install desktop entry
+  install -Dm644 "$srcdir/system-drivers.desktop" "$pkgdir/usr/share/applications/system-drivers.desktop"
+
+  # Install polkit policy for administrator access
+  install -Dm644 "$srcdir/org.systemdrivers.policy" "$pkgdir/usr/share/polkit-1/actions/org.systemdrivers.policy"
+
+  # Install icon (if exists)
+  if [ -f "$srcdir/system-drivers.png" ]; then
+    install -Dm644 "$srcdir/system-drivers.png" "$pkgdir/usr/share/icons/hicolor/48x48/apps/system-drivers.png"
+  fi
+
+  # Install documentation
+  install -Dm644 "$srcdir/$pkgname/README.md" "$pkgdir/usr/share/doc/$pkgname/README.md"
+  install -Dm644 "$srcdir/$pkgname/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
