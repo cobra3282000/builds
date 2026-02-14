@@ -1,0 +1,155 @@
+# Maintainer: Rustmilian Rustmilian@proton.me
+
+pkgname=('calamares'
+	'calamares-qt5')
+
+pkgver=3.3.8
+pkgrel=1
+pkgdesc='Distribution-independent installer framework'
+arch=($CARCH)
+url="https://github.com/calamares/calamares"
+
+license=('BSD-2-Clause'
+	'CC-BY-4.0'
+	'CC0-1.0'
+	'GPL-3.0-or-later'
+	'LGPL-2.1-only'
+	'LGPL-3.0-or-later'
+	'MIT')
+
+depends=('efibootmgr'
+	'gtk-update-icon-cache'
+	'icu'
+	'kpmcore>=24.01.75'
+	'libpwquality'
+	'mkinitcpio-openswap'
+	'squashfs-tools'
+	'yaml-cpp')
+
+makedepends=('extra-cmake-modules' 'git')
+
+backup=('usr/share/calamares/modules/bootloader.conf'
+	'usr/share/calamares/modules/displaymanager.conf'
+	'usr/share/calamares/modules/initcpio.conf'
+	'usr/share/calamares/modules/unpackfs.conf')
+
+source=("calamares-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz"
+	"calamares.desktop")
+
+sha256sums=('SKIP'
+            'SKIP')
+
+prepare() {
+	makedepends() {
+	if [[ $pkgname == 'calamares' ]]; then
+		makedepends+=('qt6-tools' 'qt6-translations')
+	elif [[ $pkgname == 'calamares-qt5' ]]; then
+		makedepends+=('qt5-tools' 'qt5-translations')
+	fi
+	handle_qt_version
+	}
+
+	handle_qt_version() {
+	if [[ $pkgname == 'calamares' ]]; then
+		qt=6
+	elif [[ $pkgname == 'calamares-qt5' ]]; then
+		qt=5
+	fi
+	cd "${srcdir}/calamares-${pkgver}" || return
+		sed -i 's/"Install configuration files" OFF/"Install configuration files" ON/' "${srcdir}/calamares-${pkgver}/CMakeLists.txt"
+		sed -i "s|\${CALAMARES_VERSION_MAJOR}.\${CALAMARES_VERSION_MINOR}.\${CALAMARES_VERSION_PATCH}|${pkgver}-${pkgrel}|g" CMakeLists.txt
+		sed -i "s|CALAMARES_VERSION_RC 1|CALAMARES_VERSION_RC 0|g" CMakeLists.txt
+	}
+
+##	Non-standard ##
+	handle_qt6_base() {
+	if ls ./qt6-base/qt6-base-*.pkg.tar.zst 1> /dev/null 2>&1; then
+		echo "qt6-base already exists"
+		update_qt6_base
+	else
+		clone_and_build_qt6_base
+	fi
+	}
+
+	update_qt6_base() {
+		(cd qt6-base && makepkg -s --noconfirm)
+	}
+
+	clone_and_build_qt6_base() {
+		git clone https://gitlab.archlinux.org/archlinux/packaging/packages/qt6-base.git
+		(cd qt6-base && makepkg -s --noconfirm)
+	}
+##	Non-standard ##
+
+	# Call the function to start the process
+	makedepends
+
+}
+
+build() {
+	cd "${srcdir}/calamares-${pkgver}" || return
+	mkdir -p build
+	cd build || return
+	cmake .. \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=lib \
+		-DCMAKE_CXX_FLAGS="${CXXFLAGS} -Wno-error=deprecated-declarations -Wno-deprecated-declarations" \
+		-DWITH_QT"${qt}"=ON \
+		-DWITH_PYTHONQT=OFF \
+		-DWITH_KF5DBus=OFF \
+		-DBoost_NO_BOOST_CMAKE=ON \
+		-DWEBVIEW_FORCE_WEBKIT=OFF \
+		-DSKIP_MODULES="webview \
+						tracking \
+						interactiveterminal \
+						initramfs \
+						initramfscfg \
+						dracut \
+						dracutlukscfg \
+						dummyprocess \
+						dummypython \
+						dummycpp \
+						dummypythonqt \
+						services-openrc \
+						keyboardq \
+						localeq \
+						welcomeq"
+	make
+}
+
+package_calamares() {
+	depends=('kconfig>=5.246'
+		'kcoreaddons>=5.246'
+		'ki18n>=5.246'
+		'kiconthemes>=5.246'
+		'kio>=5.246'
+		'polkit-qt6>=0.175.0'
+		'qt6-base>=6.6.0'
+		'qt6-svg>=6.6.0'
+		'solid>=5.246')
+
+	cd "${srcdir}/calamares-${pkgver}/build" || return
+	make DESTDIR="$pkgdir" install
+	install -Dm644 "${srcdir}/calamares.desktop" "$pkgdir/etc/xdg/autostart/calamares.desktop"
+
+}
+
+package_calamares-qt5() {
+	depends=('kconfig5>=5.113.0'
+		'kcoreaddons5>=5.113.0'
+		'kiconthemes5>=5.113.0'
+		'ki18n5>=5.113.0'
+		'kio5>=5.113.0'
+		'solid5>=5.113.0'
+		'qt5-base>=5.15.11'
+		'qt5-svg>=5.15.11'
+		'polkit-qt5>=0.175.0'
+		'plasma-framework5>=5.58'
+		'qt5-xmlpatterns>=5.15.11')
+
+	cd "${srcdir}/calamares-${pkgver}/build" || return
+	make DESTDIR="$pkgdir" install
+	install -Dm644 "${srcdir}/calamares.desktop" "$pkgdir/etc/xdg/autostart/calamares.desktop"
+
+}

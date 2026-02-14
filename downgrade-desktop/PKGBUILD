@@ -1,0 +1,30 @@
+# Maintainer: cobra3282000
+
+pkgname=downgrade-desktop
+pkgver=1.0.1
+pkgrel=1
+pkgdesc="A graphical desktop application for downgrade, providing an intuitive interface for downgrading Arch Linux packages"
+arch=('x86_64')
+url="https://darrengames.ddns.net:2500/cobra3282000/downgrade-desktop"
+license=('custom')
+depends=('gtk4' 'downgrade')
+makedepends=('git' 'gcc' 'make' 'pkgconf')
+source=("git+ssh://git@darrengames.ddns.net:2402/cobra3282000/downgrade-desktop.git")
+sha256sums=('SKIP')
+
+build() {
+    cd "$srcdir/$pkgname"
+
+    make
+}
+
+package() {
+    cd "$srcdir/$pkgname"
+
+    # Install with PREFIX=/usr instead of /usr/local
+    make PREFIX=/usr DESTDIR="$pkgdir" install
+
+    # Modify desktop file to appear in Administration folder
+    sed -i 's/Categories=.*/Categories=System;Settings;PackageManager;/' \
+        "$pkgdir/usr/share/applications/downgrade-desktop.desktop"
+}

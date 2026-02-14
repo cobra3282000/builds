@@ -1,0 +1,24 @@
+# Maintainer: Your Name <your.email@example.com>
+pkgname=pacman-custom
+pkgver=50.0.0
+pkgrel=1
+pkgdesc="A library-based package manager with dependency support"
+arch=('x86_64')
+url="https://www.archlinux.org/pacman/"
+license=('GPL')
+provides=('libalpm.so=15')
+options=(!strip !emptydirs)
+
+PKGEXT='.pkg.tar.zst'
+
+package() {
+  install -Dm755 "${startdir}/pacman" "${pkgdir}/usr/bin/pacman"
+}
+
+post_install() {
+  return 0
+}
+
+post_upgrade() {
+  return 0
+}

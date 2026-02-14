@@ -1,0 +1,26 @@
+pkgname=calamares-config
+_destname1="/etc"
+_destname2="/usr/local/bin"
+# _destname3="/usr/share/backgrounds"
+pkgver=10.0.1
+pkgrel=1
+pkgdesc="Calamares Config"
+arch=('any')
+url="git@github.com:cobra3282000/calamares-config.git"
+license=('GPL3')
+makedepends=('git')
+depends=()
+# conflicts=('calamares-net-config')
+provides=("${pkgname}")
+
+options=(!strip !emptydirs)
+source=(${pkgname}::"git+${url}/${pkgname}")
+sha256sums=('SKIP')
+package() {
+	install -dm755 ${pkgdir}${_destname1}
+	cp -r ${srcdir}/${pkgname}${_destname1}/* ${pkgdir}${_destname1}
+        install -dm755 ${pkgdir}${_destname2}
+#	cp -r ${srcdir}/${pkgname}${_destname3}/* ${pkgdir}${_destname3}
+#        cp -r ${srcdir}/${pkgname}${_destname2}/* ${pkgdir}${_destname2}
+#        chmod +x ${pkgdir}${_destname2}/*
+}

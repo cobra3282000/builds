@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=System Drivers
+Comment=Manage system hardware drivers
+Exec=pkexec /usr/bin/system-drivers
+Icon=system-drivers
+Terminal=false
+Categories=System;Settings;PackageManager;
+Keywords=drivers;hardware;graphics;nvidia;amd;intel;
+StartupNotify=true
+X-GNOME-UsesNotifications=true
